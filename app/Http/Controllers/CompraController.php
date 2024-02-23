@@ -16,8 +16,14 @@ use Illuminate\Support\Facades\Validator;
 
 class CompraController extends Controller
 {
-    public function index(){
-        # code
+    public function index()
+    {
+        try {
+            $compras = Compra::with('productos')->get();
+            return ApiResponse::success('Lista de compras obtenida exitosamente', 200, $compras);
+        } catch (Exception $e) {
+            return ApiResponse::error('Error inesperado', 500);
+        }
     }
 
     public function store(Request $request)
@@ -101,6 +107,13 @@ class CompraController extends Controller
 
     public function show($id)
     {
-        # code
+        try {
+            $compra = Compra::with('productos')->findOrFail($id);
+            return ApiResponse::success('Compra encontrada', 200, $compra);
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::error('Compra no encontrada', 404);
+        } catch (Exception $e) {
+            return ApiResponse::error('Error inesperado', 500);
+        }
     }
 }
